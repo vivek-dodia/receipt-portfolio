@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.receipt-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.receipt {
+  font-family: "Geist Mono", "Courier New", monospace;
+  background: #b2bdb9;
+  width: 450px;
+  padding: 35px;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.1);
+
+  /* Wrinkled effect */
+  transform: rotateX(2deg) rotateY(-1deg) rotateZ(1deg);
+  transition: transform 0.1s ease-out;
+
+  /* Crumpled edges */
+  border-radius: 2px 8px 3px 6px;
+
+  /* More realistic paper texture */
+  background-color: #b2bdb9;
+  /* Subtle paper grain */
+  background-image: radial-gradient(circle at 25% 25%, rgba(0, 0, 0, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(0, 0, 0, 0.015) 0%, transparent 50%),
+    radial-gradient(circle at 50% 10%, rgba(0, 0, 0, 0.01) 0%, transparent 30%),
+    radial-gradient(circle at 10% 90%, rgba(0, 0, 0, 0.01) 0%, transparent 30%),
+    radial-gradient(circle at 90% 20%, rgba(0, 0, 0, 0.008) 0%, transparent 25%), /* Very subtle creases */
+    linear-gradient(135deg, transparent 48%, rgba(0, 0, 0, 0.008) 49%, rgba(0, 0, 0, 0.008) 51%, transparent 52%),
+    linear-gradient(45deg, transparent 48%, rgba(0, 0, 0, 0.005) 49%, rgba(0, 0, 0, 0.005) 51%, transparent 52%),
+    /* Base gradient for depth */
+    linear-gradient(135deg, #b2bdb9 0%, #a8b3af 50%, #b2bdb9 100%);
+}
+
+.receipt::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Subtle random wrinkle patterns */
+  background: radial-gradient(ellipse at 20% 30%, rgba(0, 0, 0, 0.02) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 70%, rgba(0, 0, 0, 0.015) 0%, transparent 35%),
+    radial-gradient(ellipse at 60% 20%, rgba(0, 0, 0, 0.01) 0%, transparent 30%),
+    radial-gradient(ellipse at 30% 80%, rgba(0, 0, 0, 0.012) 0%, transparent 25%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.receipt::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, rgba(0, 0, 0, 0.1), transparent, rgba(0, 0, 0, 0.1));
+  z-index: -1;
+  border-radius: inherit;
+  filter: blur(3px);
+}
+
+.dashed-line {
+  border-top: 1px dashed #666;
+  margin: 12px 0;
+  position: relative;
+}
+
+.dashed-line::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: repeating-linear-gradient(to right, #666 0px, #666 4px, transparent 4px, transparent 8px);
+}
+
+.receipt-section {
+  margin: 14px 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.receipt-section h2 {
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* Thermal printer animation - faster */
+.thermal-print {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: thermalPrint 0.4s ease-out forwards;
+}
+
+@keyframes thermalPrint {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(1px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateY(5px);
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Thermal fade effect */
+.thermal-fade {
+  animation: thermalFade 8s ease-in-out infinite;
+}
+
+@keyframes thermalFade {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Apply thermal fade to different elements with delays */
+.receipt-section:nth-child(3) {
+  animation: thermalFade 12s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.receipt-section:nth-child(5) {
+  animation: thermalFade 10s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+.receipt-section:nth-child(7) {
+  animation: thermalFade 14s ease-in-out infinite;
+  animation-delay: 6s;
+}
+
+.receipt-section:nth-child(9) {
+  animation: thermalFade 11s ease-in-out infinite;
+  animation-delay: 8s;
+}
+
+/* Barcode fade effect */
+.barcode {
+  margin-top: 20px;
+  text-align: center;
+  animation: thermalFade 15s ease-in-out infinite;
+  animation-delay: 10s;
+}
+
+.barcode-lines {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 1px;
+  height: 30px;
+  margin: 10px 0;
+}
+
+.barcode-line {
+  width: 2px;
+  background: #000;
+  opacity: 0.8;
+}
+
+/* Loading animation */
+@keyframes receiptLoad {
+  0% {
+    transform: rotateX(2deg) rotateY(-1deg) rotateZ(1deg) scale(0.95);
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotateX(2deg) rotateY(-1deg) rotateZ(1deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.receipt {
+  animation: receiptLoad 0.8s ease-out forwards;
+}
+
+/* Update mobile responsiveness for new width */
+@media (max-width: 768px) {
+  .receipt {
+    width: 90vw;
+    max-width: 380px;
+    padding: 30px;
+    font-size: 12px;
+  }
+
+  .receipt-section {
+    font-size: 12px;
+  }
+
+  .receipt-section h2 {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .receipt {
+    width: 95vw;
+    max-width: 320px;
+    padding: 25px;
+    font-size: 11px;
+  }
+
+  .receipt-section {
+    font-size: 11px;
+  }
+
+  .receipt-section h2 {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .receipt {
+    width: 95vw;
+    max-width: 280px;
+    padding: 20px;
+    font-size: 10px;
+  }
+}
