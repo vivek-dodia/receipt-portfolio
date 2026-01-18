@@ -72,8 +72,7 @@ export default function ReceiptPortfolio() {
             style={{ animationDelay: "0.5s" }}
           >
             <p className="text-xs leading-relaxed">
-              Automating networks and infrastructure at ResiBridge when the sun's up, and diving into code adventures on
-              GitHub when the stars take over.
+              Network Developer at ResiBridge, focused on automation and infrastructure. Open source contributor.
             </p>
           </div>
 
