@@ -15,6 +15,9 @@
   margin: 0 auto;
   position: relative;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.1);
+  color: #1a1a1a;
+  /* Subtle ink-bleed to mimic thermal printer head wobble */
+  text-shadow: 0.3px 0.3px 0 rgba(0, 0, 0, 0.18), -0.2px 0 0 rgba(0, 0, 0, 0.08);
 
   /* Wrinkled effect */
   transform: rotateX(2deg) rotateY(-1deg) rotateZ(1deg);
@@ -66,6 +69,7 @@
   filter: blur(3px);
 }
 
+
 .dashed-line {
   border-top: 1px dashed #666;
   margin: 12px 0;
@@ -91,6 +95,26 @@
 .receipt-section h2 {
   font-size: 14px;
   letter-spacing: 1px;
+}
+
+/* Receipt-style dotted leaders between left text and right value */
+.leader-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.leader-dots {
+  flex: 1 1 auto;
+  align-self: end;
+  margin-bottom: 4px;
+  border-bottom: 1px dotted #555;
+  opacity: 0.55;
+  min-width: 12px;
+}
+
+.leader-row > span:last-child {
+  flex-shrink: 0;
 }
 
 /* Thermal printer animation - faster */
@@ -196,46 +220,124 @@
   animation: receiptLoad 0.8s ease-out forwards;
 }
 
-/* Update mobile responsiveness for new width */
+/* Mobile responsiveness — keep text readable, ease the 3D tilt so distortion stays subtle */
 @media (max-width: 768px) {
+  @keyframes receiptLoad {
+    0% {
+      transform: rotateX(1deg) rotateY(-0.5deg) rotateZ(0.5deg) scale(0.96);
+      opacity: 0.8;
+    }
+    100% {
+      transform: rotateX(1deg) rotateY(-0.5deg) rotateZ(0.5deg) scale(1);
+      opacity: 1;
+    }
+  }
+
   .receipt {
-    width: 90vw;
-    max-width: 380px;
-    padding: 30px;
-    font-size: 12px;
+    width: 92vw;
+    max-width: 420px;
+    padding: 28px;
+    font-size: 13px;
+    /* Flatter tilt — text legibility wins on small screens */
+    transform: rotateX(1deg) rotateY(-0.5deg) rotateZ(0.5deg);
+    border-radius: 2px 6px 3px 5px;
   }
 
   .receipt-section {
-    font-size: 12px;
-  }
-
-  .receipt-section h2 {
     font-size: 13px;
   }
-}
-
-@media (max-width: 640px) {
-  .receipt {
-    width: 95vw;
-    max-width: 320px;
-    padding: 25px;
-    font-size: 11px;
-  }
-
-  .receipt-section {
-    font-size: 11px;
-  }
 
   .receipt-section h2 {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 480px) {
   .receipt {
-    width: 95vw;
-    max-width: 280px;
-    padding: 20px;
-    font-size: 10px;
+    width: 94vw;
+    max-width: 380px;
+    padding: 22px;
+    font-size: 12px;
+  }
+
+  .receipt-section {
+    font-size: 12px;
+    margin: 12px 0;
+  }
+
+  .receipt-section h2 {
+    font-size: 13px;
+  }
+
+  .dashed-line {
+    margin: 10px 0;
+  }
+
+  /* Stack title + date pairs cleanly so long titles don't crush each other */
+  .receipt-section .flex.justify-between {
+    gap: 8px;
+  }
+}
+
+/* On any touch-capable device, make links visibly tappable (no hover state) */
+@media (hover: none) {
+  .receipt a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+/* Update the idle-sway base so it matches the flatter mobile tilt */
+@media (hover: none) and (max-width: 768px) {
+  @keyframes idleSway {
+    0%,
+    100% {
+      transform: rotateX(1deg) rotateY(-0.5deg) rotateZ(0.5deg);
+    }
+    50% {
+      transform: rotateX(1.4deg) rotateY(-1deg) rotateZ(0.2deg);
+    }
+  }
+}
+
+/* Gentle idle sway on touch devices (no hover-capable pointer) */
+@media (hover: none) {
+  .receipt {
+    animation: receiptLoad 0.8s ease-out forwards, idleSway 9s ease-in-out 0.8s infinite;
+  }
+}
+
+@keyframes idleSway {
+  0%,
+  100% {
+    transform: rotateX(2deg) rotateY(-1deg) rotateZ(1deg);
+  }
+  50% {
+    transform: rotateX(2.6deg) rotateY(-1.6deg) rotateZ(0.6deg);
+  }
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .receipt,
+  .thermal-print,
+  .thermal-fade,
+  .barcode,
+  .receipt-section:nth-child(3),
+  .receipt-section:nth-child(5),
+  .receipt-section:nth-child(7),
+  .receipt-section:nth-child(9) {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .receipt {
+    transform: none !important;
+  }
+
+  .thermal-print {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 }
